@@ -17,8 +17,7 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         url: "https://www.facebook.com/v21.0/dialog/oauth",
         params: {
-          scope:
-            "instagram_basic,instagram_manage_comments,pages_show_list,business_management",
+          scope: "email public_profile pages_show_list pages_read_engagement",
         },
       },
       token: "https://graph.facebook.com/v21.0/oauth/access_token",
