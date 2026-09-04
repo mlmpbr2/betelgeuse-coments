@@ -22,6 +22,9 @@ export const authOptions: NextAuthOptions = {
       id: "instagram",
       name: "Instagram",
       type: "oauth",
+      // O OAuth do Instagram nao retorna o parametro "state" nem suporta PKCE;
+      // sem isso o next-auth falha com "state missing from the response"
+      checks: ["none"],
       authorization: {
         url: "https://www.instagram.com/oauth/authorize",
         params: {
