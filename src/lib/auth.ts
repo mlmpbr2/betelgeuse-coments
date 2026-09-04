@@ -6,15 +6,12 @@ import { getLongLivedToken } from "./instagram";
 const INITIAL_CREDITS = 50;
 
 type InstagramProfile = {
-  user_id: string;
-  username?: string;
+  id: string;
   name?: string;
-  account_type?: string;
+  email?: string;
+  picture?: { data?: { url?: string } };
 };
 
-// Fluxo "Instagram API with Instagram Login" (padrao da Meta desde jul/2024):
-// o token ja pertence diretamente a conta profissional do Instagram
-// (Business ou Creator) — nao ha Pagina do Facebook no fluxo.
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -22,28 +19,28 @@ export const authOptions: NextAuthOptions = {
       id: "instagram",
       name: "Instagram",
       type: "oauth",
-      // O OAuth do Instagram nao retorna o parametro "state" nem suporta PKCE;
-      // sem isso o next-auth falha com "state missing from the response"
       checks: ["none"],
       authorization: {
-        url: "https://www.instagram.com/oauth/authorize",
+        url: "https://www.facebook.com/v21.0/dialog/oauth",
         params: {
-          scope: "instagram_business_basic,instagram_business_manage_comments",
-        },
+          scope: "email public_profile pages_show_list pages_read_engagement instagram_business_basic instagram_business_manage_comments"
+        }
       },
-      token: "https://api.instagram.com/oauth/access_token",
+      token: {
+        url: "https://graph.facebook.com/v21.0/oauth/access_token"
+      },
       userinfo: {
-        url: "https://graph.instagram.com/v21.0/me",
-        params: { fields: "user_id,username,name,account_type" },
+        url: "https://graph.facebook.com/v21.0/me",
+        params: { fields: "id,name,email,picture" }
       },
       clientId: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
       profile(profile: InstagramProfile) {
         return {
-          id: profile.user_id,
-          name: profile.name ?? profile.username ?? null,
-          email: null,
-          image: null,
+          id: profile.id,
+          name: profile.name ?? null,
+          email: profile.email ?? null,
+          image: profile.picture?.data?.url ?? null,
         };
       },
     },
@@ -57,8 +54,8 @@ export const authOptions: NextAuthOptions = {
       try {
         const longLived = await getLongLivedToken(account.access_token);
         const igProfile = profile as InstagramProfile | undefined;
-        const igUserId = igProfile?.user_id ?? user.id;
-        const username = igProfile?.username ?? null;
+        const igUserId = igProfile?.id ?? user.id;
+        const username = igProfile?.name ?? null;
         const tokenExpiresAt = new Date(
           Date.now() + (longLived.expires_in ?? 0) * 1000
         );
@@ -80,7 +77,6 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        // Credito inicial para usuarios novos
         await prisma.credit.upsert({
           where: { userId: user.id },
           create: { userId: user.id, balance: INITIAL_CREDITS },
