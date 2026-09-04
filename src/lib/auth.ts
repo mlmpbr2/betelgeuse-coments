@@ -1,12 +1,20 @@
 import { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
-import { getInstagramBusinessAccount, getLongLivedToken } from "./instagram";
+import { getLongLivedToken } from "./instagram";
 
 const INITIAL_CREDITS = 50;
 
-// A Instagram Basic Display API foi descontinuada pela Meta; o login para a
-// Instagram Graph API (contas Business/Creator) passa pelo OAuth do Facebook.
+type InstagramProfile = {
+  user_id: string;
+  username?: string;
+  name?: string;
+  account_type?: string;
+};
+
+// Fluxo "Instagram API with Instagram Login" (padrao da Meta desde jul/2024):
+// o token ja pertence diretamente a conta profissional do Instagram
+// (Business ou Creator) — nao ha Pagina do Facebook no fluxo.
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -15,23 +23,22 @@ export const authOptions: NextAuthOptions = {
       name: "Instagram",
       type: "oauth",
       authorization: {
-        url: "https://www.facebook.com/v21.0/dialog/oauth",
+        url: "https://www.instagram.com/oauth/authorize",
         params: {
-          scope:
-            "email public_profile pages_show_list pages_read_engagement instagram_basic instagram_manage_comments",
+          scope: "instagram_business_basic,instagram_business_manage_comments",
         },
       },
-      token: "https://graph.facebook.com/v21.0/oauth/access_token",
+      token: "https://api.instagram.com/oauth/access_token",
       userinfo: {
-        url: "https://graph.facebook.com/v21.0/me",
-        params: { fields: "id,name" },
+        url: "https://graph.instagram.com/v21.0/me",
+        params: { fields: "user_id,username,name,account_type" },
       },
       clientId: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      profile(profile: { id: string; name?: string }) {
+      profile(profile: InstagramProfile) {
         return {
-          id: profile.id,
-          name: profile.name ?? null,
+          id: profile.user_id,
+          name: profile.name ?? profile.username ?? null,
           email: null,
           image: null,
         };
@@ -39,35 +46,36 @@ export const authOptions: NextAuthOptions = {
     },
   ],
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ user, account, profile }) {
       if (account?.provider !== "instagram" || !account.access_token) {
         return true;
       }
 
       try {
         const longLived = await getLongLivedToken(account.access_token);
-        const igAccount = await getInstagramBusinessAccount(
-          longLived.access_token
+        const igProfile = profile as InstagramProfile | undefined;
+        const igUserId = igProfile?.user_id ?? user.id;
+        const username = igProfile?.username ?? null;
+        const tokenExpiresAt = new Date(
+          Date.now() + (longLived.expires_in ?? 0) * 1000
         );
 
-        if (igAccount) {
-          await prisma.instagramAccount.upsert({
-            where: { igUserId: igAccount.igUserId },
-            create: {
-              userId: user.id,
-              igUserId: igAccount.igUserId,
-              username: igAccount.username,
-              accessToken: longLived.access_token,
-              tokenExpiresAt: new Date(Date.now() + longLived.expires_in * 1000),
-            },
-            update: {
-              userId: user.id,
-              username: igAccount.username,
-              accessToken: longLived.access_token,
-              tokenExpiresAt: new Date(Date.now() + longLived.expires_in * 1000),
-            },
-          });
-        }
+        await prisma.instagramAccount.upsert({
+          where: { igUserId },
+          create: {
+            userId: user.id,
+            igUserId,
+            username,
+            accessToken: longLived.access_token,
+            tokenExpiresAt,
+          },
+          update: {
+            userId: user.id,
+            username,
+            accessToken: longLived.access_token,
+            tokenExpiresAt,
+          },
+        });
 
         // Credito inicial para usuarios novos
         await prisma.credit.upsert({

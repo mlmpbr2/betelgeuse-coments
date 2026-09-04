@@ -1,4 +1,4 @@
-const GRAPH_API = "https://graph.facebook.com/v21.0";
+const GRAPH_API = "https://graph.instagram.com/v21.0";
 
 type GraphError = {
   error?: { message?: string; type?: string; code?: number };
@@ -21,47 +21,18 @@ export type LongLivedToken = {
   expires_in: number;
 };
 
+// Instagram Login (fluxo novo da Meta): troca o token curto por um long-lived (60 dias)
 export async function getLongLivedToken(
   shortLivedToken: string
 ): Promise<LongLivedToken> {
   const params = new URLSearchParams({
-    grant_type: "fb_exchange_token",
-    client_id: process.env.FACEBOOK_CLIENT_ID ?? "",
+    grant_type: "ig_exchange_token",
     client_secret: process.env.FACEBOOK_CLIENT_SECRET ?? "",
-    fb_exchange_token: shortLivedToken,
+    access_token: shortLivedToken,
   });
   return graphFetch<LongLivedToken>(
-    `${GRAPH_API}/oauth/access_token?${params.toString()}`
+    `${GRAPH_API}/access_token?${params.toString()}`
   );
-}
-
-export type InstagramBusinessAccount = {
-  igUserId: string;
-  username: string | null;
-};
-
-// Descobre a conta Instagram Business vinculada a uma Pagina do Facebook do usuario
-export async function getInstagramBusinessAccount(
-  accessToken: string
-): Promise<InstagramBusinessAccount | null> {
-  const pages = await graphFetch<{
-    data?: Array<{
-      id: string;
-      instagram_business_account?: { id: string };
-    }>;
-  }>(
-    `${GRAPH_API}/me/accounts?fields=instagram_business_account&access_token=${accessToken}`
-  );
-
-  const igId = pages.data?.find((p) => p.instagram_business_account)
-    ?.instagram_business_account?.id;
-  if (!igId) return null;
-
-  const igProfile = await graphFetch<{ username?: string }>(
-    `${GRAPH_API}/${igId}?fields=username&access_token=${accessToken}`
-  );
-
-  return { igUserId: igId, username: igProfile.username ?? null };
 }
 
 export type InstagramPost = {
