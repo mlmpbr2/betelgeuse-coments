@@ -25,7 +25,35 @@ export const authOptions: NextAuthOptions = {
         }
       },
       token: {
-        url: "https://api.instagram.com/oauth/access_token"
+        url: "https://api.instagram.com/oauth/access_token",
+        async request(context) {
+          const { provider, params } = context;
+          const tokenUrl =
+            typeof provider.token === "string"
+              ? provider.token
+              : (provider.token?.url as string);
+          const res = await fetch(tokenUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+              client_id: provider.clientId as string,
+              client_secret: provider.clientSecret as string,
+              grant_type: "authorization_code",
+              redirect_uri: provider.callbackUrl,
+              code: params.code as string,
+            }),
+          });
+          const text = await res.text();
+          if (!res.ok) throw new Error(`token exchange: HTTP ${res.status} - ${text}`);
+          // a resposta pode vir JSON ou form-encoded; tente os dois
+          let tokens: Record<string, unknown>;
+          try {
+            tokens = JSON.parse(text);
+          } catch {
+            tokens = Object.fromEntries(new URLSearchParams(text));
+          }
+          return { tokens };
+        },
       },
       userinfo: {
         url: "https://graph.instagram.com/v21.0/me",
