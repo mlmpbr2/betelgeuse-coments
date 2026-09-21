@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getComments } from "@/lib/instagram";
 import { analyzeSentiment } from "@/lib/sentiment";
+import { analyzeSentimentGemini } from "@/lib/sentiment-gemini";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -65,19 +66,72 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const results = newComments.map((comment) => {
-    const { sentiment, score } = analyzeSentiment(comment.text ?? "");
-    return {
-      commentId: comment.id,
-      postId,
-      igAccountId: igAccount.id,
-      author: comment.username ?? null,
-      text: comment.text ?? "",
-      sentiment,
-      score,
-      hidden: comment.hidden ?? false,
-    };
-  });
+  // Tenta Gemini primeiro; qualquer falha (timeout, erro, resposta invalida)
+  // cai para o lexico PT-BR local. O engine usado vai na resposta e no log.
+  type AnalysisRow = {
+    commentId: string;
+    postId: string;
+    igAccountId: string;
+    author: string | null;
+    text: string;
+    sentiment: string;
+    score: number;
+    hidden: boolean;
+  };
+
+  let results: AnalysisRow[];
+  let engine: "gemini" | "lexico";
+
+  try {
+    const geminiResults = await analyzeSentimentGemini(
+      newComments.map((c) => ({ commentId: c.id, text: c.text ?? "" }))
+    );
+    if (geminiResults.length !== newComments.length) {
+      throw new Error("resposta da Gemini incompleta");
+    }
+    const byId = new Map(geminiResults.map((r) => [r.commentId, r]));
+    results = newComments.map((comment) => {
+      const g = byId.get(comment.id);
+      if (!g) {
+        throw new Error(`comentario ${comment.id} sem analise da Gemini`);
+      }
+      return {
+        commentId: comment.id,
+        postId,
+        igAccountId: igAccount.id,
+        author: comment.username ?? null,
+        text: comment.text ?? "",
+        sentiment: g.sentiment,
+        score: g.score,
+        hidden: comment.hidden ?? false,
+      };
+    });
+    engine = "gemini";
+  } catch (error) {
+    console.warn(
+      `[sentiment] Gemini indisponivel, usando lexico local: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+    results = newComments.map((comment) => {
+      const { sentiment, score } = analyzeSentiment(comment.text ?? "");
+      return {
+        commentId: comment.id,
+        postId,
+        igAccountId: igAccount.id,
+        author: comment.username ?? null,
+        text: comment.text ?? "",
+        sentiment,
+        score,
+        hidden: comment.hidden ?? false,
+      };
+    });
+    engine = "lexico";
+  }
+
+  console.log(
+    `[sentiment] engine=${engine} analyzed=${results.length} postId=${postId}`
+  );
 
   await prisma.$transaction([
     prisma.commentAnalysis.createMany({ data: results }),
@@ -91,5 +145,6 @@ export async function POST(req: NextRequest) {
     analyzed: results.length,
     results,
     balance: balance - results.length,
+    engine,
   });
 }
