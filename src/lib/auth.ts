@@ -6,10 +6,8 @@ import { getLongLivedToken } from "./instagram";
 const INITIAL_CREDITS = 50;
 
 type InstagramProfile = {
-  id: string;
-  name?: string;
-  email?: string;
-  picture?: { data?: { url?: string } };
+  user_id: string;
+  username?: string;
 };
 
 export const authOptions: NextAuthOptions = {
@@ -21,26 +19,26 @@ export const authOptions: NextAuthOptions = {
       type: "oauth",
       checks: ["none"],
       authorization: {
-        url: "https://www.facebook.com/v21.0/dialog/oauth",
+        url: "https://www.instagram.com/oauth/authorize",
         params: {
-          scope: "email public_profile pages_show_list pages_read_engagement instagram_business_basic instagram_business_manage_comments"
+          scope: "instagram_business_basic instagram_business_manage_comments"
         }
       },
       token: {
-        url: "https://graph.facebook.com/v21.0/oauth/access_token"
+        url: "https://api.instagram.com/oauth/access_token"
       },
       userinfo: {
-        url: "https://graph.facebook.com/v21.0/me",
-        params: { fields: "id,name,email,picture" }
+        url: "https://graph.instagram.com/v21.0/me",
+        params: { fields: "user_id,username" }
       },
       clientId: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
       profile(profile: InstagramProfile) {
         return {
-          id: profile.id,
-          name: profile.name ?? null,
-          email: profile.email ?? null,
-          image: profile.picture?.data?.url ?? null,
+          id: profile.user_id,
+          name: profile.username ?? null,
+          email: null,
+          image: null,
         };
       },
     },
@@ -54,8 +52,8 @@ export const authOptions: NextAuthOptions = {
       try {
         const longLived = await getLongLivedToken(account.access_token);
         const igProfile = profile as InstagramProfile | undefined;
-        const igUserId = igProfile?.id ?? user.id;
-        const username = igProfile?.name ?? null;
+        const igUserId = igProfile?.user_id ?? user.id;
+        const username = igProfile?.username ?? null;
         const tokenExpiresAt = new Date(
           Date.now() + (longLived.expires_in ?? 0) * 1000
         );
