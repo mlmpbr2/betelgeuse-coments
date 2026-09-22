@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -53,6 +54,7 @@ const SENTIMENT_VARIANT: Record<
 };
 
 export function PostsTable() {
+  const router = useRouter();
   const [posts, setPosts] = useState<Post[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [analyzingPostId, setAnalyzingPostId] = useState<string | null>(null);
@@ -86,9 +88,11 @@ export function PostsTable() {
       if (data.analyzed === 0) {
         // Ja analisado antes: recarrega comentarios e usa analises existentes
         setAnalyses((prev) => ({ ...prev, [postId]: prev[postId] ?? [] }));
+        router.refresh();
         return;
       }
       setAnalyses((prev) => ({ ...prev, [postId]: data.results }));
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao analisar");
     } finally {
@@ -115,8 +119,9 @@ export function PostsTable() {
           a.commentId === analysis.commentId ? { ...a, hidden } : a
         ),
       }));
+      router.refresh();
     },
-    []
+    [router]
   );
 
   const sendReply = useCallback(async () => {
@@ -234,7 +239,11 @@ export function PostsTable() {
               <TableBody>
                 {items.map((item) => (
                   <TableRow key={item.commentId}>
-                    <TableCell>{item.author ?? "-"}</TableCell>
+                    <TableCell>
+                      {item.author?.trim()
+                        ? item.author
+                        : "Usuario do Instagram"}
+                    </TableCell>
                     <TableCell className="max-w-md">{item.text}</TableCell>
                     <TableCell>
                       <Badge variant={SENTIMENT_VARIANT[item.sentiment]}>
@@ -278,7 +287,10 @@ export function PostsTable() {
           <DialogHeader>
             <DialogTitle>Responder comentario</DialogTitle>
             <DialogDescription>
-              {replyTarget?.author}: {replyTarget?.text}
+              {replyTarget?.author?.trim()
+                ? replyTarget.author
+                : "Usuario do Instagram"}
+              : {replyTarget?.text}
             </DialogDescription>
           </DialogHeader>
           <Textarea

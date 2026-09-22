@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { MetricCards } from "@/components/dashboard/MetricCards";
+import { PermissionBadges } from "@/components/dashboard/PermissionBadges";
 import { PostsTable } from "@/components/dashboard/PostsTable";
 import { Separator } from "@/components/ui/separator";
 
@@ -20,6 +21,8 @@ export default async function DashboardPage() {
           creditos.
         </p>
       </header>
+
+      <PermissionBadges />
 
       <MetricCards userId={session.user.id} />
 

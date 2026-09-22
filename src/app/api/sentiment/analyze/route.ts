@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -99,7 +100,9 @@ export async function POST(req: NextRequest) {
         commentId: comment.id,
         postId,
         igAccountId: igAccount.id,
-        author: comment.username ?? null,
+        author: comment.username?.trim()
+          ? comment.username
+          : "Usuario do Instagram",
         text: comment.text ?? "",
         sentiment: g.sentiment,
         score: g.score,
@@ -119,7 +122,9 @@ export async function POST(req: NextRequest) {
         commentId: comment.id,
         postId,
         igAccountId: igAccount.id,
-        author: comment.username ?? null,
+        author: comment.username?.trim()
+          ? comment.username
+          : "Usuario do Instagram",
         text: comment.text ?? "",
         sentiment,
         score,
@@ -140,6 +145,8 @@ export async function POST(req: NextRequest) {
       data: { balance: { decrement: results.length } },
     }),
   ]);
+
+  revalidatePath("/dashboard");
 
   return NextResponse.json({
     analyzed: results.length,
