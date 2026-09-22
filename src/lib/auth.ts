@@ -46,12 +46,19 @@ export const authOptions: NextAuthOptions = {
           const text = await res.text();
           if (!res.ok) throw new Error(`token exchange: HTTP ${res.status} - ${text}`);
           // a resposta pode vir JSON ou form-encoded; tente os dois
-          let tokens: Record<string, unknown>;
+          let raw: Record<string, unknown>;
           try {
-            tokens = JSON.parse(text);
+            raw = JSON.parse(text);
           } catch {
-            tokens = Object.fromEntries(new URLSearchParams(text));
+            raw = Object.fromEntries(new URLSearchParams(text));
           }
+          // O adapter gravaria todos os campos da resposta (user_id, permissions...)
+          // na tabela Account, que nao possui essas colunas (adapter_error_linkAccount).
+          // Manter apenas o que o adapter suporta.
+          const tokens: Record<string, unknown> = {
+            access_token: raw.access_token,
+          };
+          if (raw.expires_in) tokens.expires_in = raw.expires_in;
           return { tokens };
         },
       },
@@ -72,16 +79,31 @@ export const authOptions: NextAuthOptions = {
     },
   ],
   callbacks: {
+    async session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
+  // Os upserts NAO podem ficar no callback signIn: o next-auth v4 o executa
+  // ANTES de persistir o usuario (core/routes/callback.js), e nesse ponto
+  // user.id ainda e o user_id numerico do Instagram -> FK P2003.
+  // No event signIn o usuario ja foi gravado pelo adapter, entao user.id
+  // e o ID do Prisma.
+  events: {
     async signIn({ user, account, profile }) {
       if (account?.provider !== "instagram" || !account.access_token) {
-        return true;
+        return;
       }
 
       try {
         const longLived = await getLongLivedToken(account.access_token);
-        const igProfile = profile as InstagramProfile | undefined;
-        const igUserId = igProfile?.user_id ?? user.id;
-        const username = igProfile?.username ?? null;
+        // `profile` e o objeto mapeado pelo profile() do provider:
+        // id = user_id numerico do Instagram, name = username.
+        const mapped = profile as { id?: unknown; name?: unknown } | undefined;
+        const igUserId = String(mapped?.id ?? user.id);
+        const username = typeof mapped?.name === "string" ? mapped.name : null;
         const tokenExpiresAt = new Date(
           Date.now() + (longLived.expires_in ?? 0) * 1000
         );
@@ -109,16 +131,8 @@ export const authOptions: NextAuthOptions = {
           update: {},
         });
       } catch (error) {
-        console.error("Erro no signIn (upsert Instagram/Credit):", error);
+        console.error("Erro no event signIn (upsert Instagram/Credit):", error);
       }
-
-      return true;
-    },
-    async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-      }
-      return session;
     },
   },
   pages: {
