@@ -11,7 +11,7 @@ export type GeminiSentimentResult = {
   score: number; // -1 a 1
 };
 
-const MODEL = "gemini-2.5-flash";
+const MODEL = "gemini-3.6-flash";
 const BATCH_SIZE = 20;
 const TIMEOUT_MS = 10_000;
 const VALID_SENTIMENTS: readonly SentimentLabel[] = [
