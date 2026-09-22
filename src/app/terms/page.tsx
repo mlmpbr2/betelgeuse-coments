@@ -1,74 +1,135 @@
+import Link from "next/link";
+
 export const metadata = {
-  title: "Termos de Serviço — Betelgeuse Coments",
+  title: "Termos de Uso — Betelgeuse Coments",
 };
 
 export default function TermsPage() {
   return (
-    <main className="max-w-3xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold mb-6">Termos de Serviço</h1>
-      <p className="text-sm text-muted-foreground mb-8">Última atualização: 4 de setembro de 2026</p>
+    <main className="mx-auto max-w-3xl px-6 py-10">
+      <p className="text-xs uppercase tracking-widest text-slate-400">
+        Betelgeuse T.I.
+      </p>
+      <h1 className="text-3xl font-bold">Termos de Uso</h1>
+      <p className="mt-1 text-sm text-slate-400">
+        Betelgeuse Coments — Última atualização: 23 de setembro de 2026
+      </p>
 
-      <section className="space-y-6 text-foreground/90 leading-relaxed">
-        <div>
-          <h2 className="text-xl font-semibold mb-2">1. Aceitação dos termos</h2>
-          <p>
-            Ao acessar e usar o Betelgeuse Coments, você concorda com estes Termos de Serviço. 
-            Se não concordar, não utilize o aplicativo.
-          </p>
-        </div>
+      <h2 className="mt-6 text-xl font-semibold">1. O serviço</h2>
+      <p className="mt-2 text-slate-600">
+        O <strong>Betelgeuse Coments</strong>, operado pela{" "}
+        <strong>Betelgeuse T.I.</strong>, é uma ferramenta que, mediante
+        autorização do titular, conecta-se à conta profissional do Instagram do
+        usuário para: (a) listar publicações e comentários; (b) classificar
+        automaticamente o sentimento dos comentários; e (c) executar ações de
+        moderação (ocultar e responder) exclusivamente sob comando do usuário.
+      </p>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">2. Descrição do serviço</h2>
-          <p>
-            O Betelgeuse Coments é uma ferramenta de análise de sentimento e moderação de comentários 
-            do Instagram. O app permite que usuários autenticados visualizem, classifiquem e gerenciem 
-            comentários em suas publicações, mediante créditos de uso.
-          </p>
-        </div>
+      <h2 className="mt-6 text-xl font-semibold">2. Elegibilidade e conta</h2>
+      <ul className="mt-2 list-disc pl-5 text-slate-600">
+        <li>
+          O serviço destina-se a contas profissionais (Business ou Creator) do
+          Instagram;
+        </li>
+        <li>
+          O acesso é feito pelo fluxo oficial de autorização da Meta; nunca
+          solicitamos sua senha;
+        </li>
+        <li>
+          Você é responsável por manter a segurança da sua conta e por todas as
+          ações executadas a partir do seu painel.
+        </li>
+      </ul>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">3. Uso permitido</h2>
-          <p>
-            Você se compromete a usar o app apenas para gerenciar conteúdo de contas do Instagram 
-            de sua propriedade ou sob sua autorização expressa. O uso para spam, assédio ou 
-            violação das diretrizes do Meta é estritamente proibido.
-          </p>
-        </div>
+      <h2 className="mt-6 text-xl font-semibold">3. Créditos e uso</h2>
+      <p className="mt-2 text-slate-600">
+        Determinadas funcionalidades (como análises de sentimento) podem
+        consumir créditos disponibilizados no painel. Créditos não utilizados
+        não são reembolsáveis, salvo disposição em contrário no ato da
+        contratação.
+      </p>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">4. Créditos e pagamento</h2>
-          <p>
-            Cada análise de comentário consome 1 (um) crédito. Os créditos são gerenciados pelo próprio 
-            usuário dentro do dashboard. Não realizamos reembolsos de créditos já consumidos.
-          </p>
-        </div>
+      <h2 className="mt-6 text-xl font-semibold">4. Uso aceitável</h2>
+      <ul className="mt-2 list-disc pl-5 text-slate-600">
+        <li>
+          Utilizar o serviço somente em contas das quais você é titular ou está
+          legalmente autorizado a gerenciar;
+        </li>
+        <li>
+          Não tentar acessar dados de terceiros, contornar limites da
+          plataforma ou realizar engenharia reversa;
+        </li>
+        <li>
+          Não utilizar o serviço para spam, assédio, moderação discriminatória
+          ou qualquer finalidade que viole os termos da Meta ou a legislação
+          vigente.
+        </li>
+      </ul>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">5. Limitação de responsabilidade</h2>
-          <p>
-            O Betelgeuse Coments é fornecido &quot;como está&quot;. Não garantimos que a análise de sentimento 
-            seja 100% precisa. Não nos responsabilizamos por decisões tomadas com base nos resultados 
-            da ferramenta, incluindo ocultação ou resposta de comentários.
-          </p>
-        </div>
+      <h2 className="mt-6 text-xl font-semibold">
+        5. Sobre a análise de sentimentos
+      </h2>
+      <p className="mt-2 text-slate-600">
+        A classificação (positivo, neutro, negativo) é gerada automaticamente e
+        tem caráter <strong>auxiliar e estatístico</strong>. Ela não constitui
+        verdade absoluta sobre a intenção do comentarista. Decisões de
+        moderação são sempre do usuário.
+      </p>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">6. Conformidade com o Meta</h2>
-          <p>
-            O app opera em estrita conformidade com as políticas de plataforma do Meta 
-            (Facebook e Instagram), incluindo as diretrizes de uso da API do Instagram e 
-            as regras de privacidade e proteção de dados.
-          </p>
-        </div>
+      <h2 className="mt-6 text-xl font-semibold">
+        6. Dependência da plataforma Meta
+      </h2>
+      <p className="mt-2 text-slate-600">
+        O serviço depende da API do Instagram, fornecida pela Meta. Alterações,
+        instabilidades ou restrições impostas pela Meta podem afetar
+        funcionalidades, sem que isso configure falha da Betelgeuse T.I. O uso
+        do Instagram permanece sujeito aos termos e políticas da própria Meta.
+      </p>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">7. Alterações nos termos</h2>
-          <p>
-            Reservamo-nos o direito de modificar estes termos a qualquer momento. 
-            Alterações significativas serão notificadas por e-mail ou no dashboard do app.
-          </p>
-        </div>
-      </section>
+      <h2 className="mt-6 text-xl font-semibold">7. Propriedade intelectual</h2>
+      <p className="mt-2 text-slate-600">
+        O aplicativo, sua marca e seu código são propriedade da Betelgeuse T.I.
+        Os dados e conteúdos da sua conta do Instagram permanecem seus;
+        concede-se a nós apenas a licença estritamente necessária para operar
+        as funcionalidades contratadas.
+      </p>
+
+      <h2 className="mt-6 text-xl font-semibold">
+        8. Limitação de responsabilidade
+      </h2>
+      <p className="mt-2 text-slate-600">
+        O serviço é fornecido &quot;como está&quot;. Na máxima extensão
+        permitida em lei, não respondemos por danos indiretos, lucros cessantes
+        ou decisões tomadas com base nas classificações automáticas de
+        sentimento.
+      </p>
+
+      <h2 className="mt-6 text-xl font-semibold">9. Rescisão</h2>
+      <p className="mt-2 text-slate-600">
+        Você pode encerrar o uso a qualquer momento desconectando a conta (ver{" "}
+        <Link href="/exclusao-de-dados" className="underline">
+          Exclusão de Dados
+        </Link>
+        ). Podemos suspender contas que violem estes Termos, mediante aviso.
+      </p>
+
+      <h2 className="mt-6 text-xl font-semibold">10. Legislação e foro</h2>
+      <p className="mt-2 text-slate-600">
+        Estes Termos são regidos pelas leis da República Federativa do Brasil.
+        Fica eleito o foro da comarca de{" "}
+        <strong>[cidade/UF da sede]</strong> para dirimir controvérsias, salvo
+        competência legal diversa.
+      </p>
+
+      <h2 className="mt-6 text-xl font-semibold">11. Contato</h2>
+      <p className="mt-2 text-slate-600">
+        Betelgeuse T.I. — E-mail:{" "}
+        <strong>[contato@betelgeuseti.com.br]</strong>
+      </p>
+
+      <footer className="mt-10 border-t pt-4 text-sm text-slate-400">
+        © 2026 Betelgeuse T.I.
+      </footer>
     </main>
   );
 }
