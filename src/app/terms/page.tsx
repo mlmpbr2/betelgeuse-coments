@@ -118,14 +118,14 @@ export default function TermsPage() {
       <p className="mt-2 text-slate-300">
         Estes Termos são regidos pelas leis da República Federativa do Brasil.
         Fica eleito o foro da comarca de{" "}
-        <strong>[cidade/UF da sede]</strong> para dirimir controvérsias, salvo
+        <strong>Itajaí/SC</strong> para dirimir controvérsias, salvo
         competência legal diversa.
       </p>
 
       <h2 className="mt-6 text-xl font-semibold">11. Contato</h2>
       <p className="mt-2 text-slate-300">
         Betelgeuse T.I. — E-mail:{" "}
-        <strong>[contato@betelgeuseti.com.br]</strong>
+        <strong>falecom@mariomello.com.br</strong>
       </p>
 
       <CompanyInfo />

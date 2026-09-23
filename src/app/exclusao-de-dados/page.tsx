@@ -76,7 +76,7 @@ export default function DataDeletionPage() {
           </span>
         </h3>
         <p className="mt-2 text-slate-300">
-          Envie um e-mail para <strong>[falecom@mariomello.com.br]</strong> com
+          Envie um e-mail para <strong>falecom@mariomello.com.br</strong> com
           o assunto{" "}
           <strong>&quot;Exclusão de dados — Betelgeuse Coments&quot;</strong>,
           informando o seu nome de usuário do Instagram (@). Confirmaremos o
@@ -106,7 +106,7 @@ export default function DataDeletionPage() {
         <Link href="/privacy" className="underline">
           Política de Privacidade
         </Link>{" "}
-        ou escreva para <strong>[contato@betelgeuseti.com.br]</strong>.
+        ou escreva para <strong>falecom@mariomello.com.br</strong>.
       </p>
 
       <CompanyInfo />

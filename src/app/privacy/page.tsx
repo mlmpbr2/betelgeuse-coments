@@ -27,7 +27,7 @@ export default function PrivacyPage() {
       </p>
       <p className="mt-2 text-slate-300">
         Contato do controlador de dados:{" "}
-        <strong>[falecom@mariomello.com.br]</strong>
+        <strong>falecom@mariomello.com.br</strong>
       </p>
 
       <h2 className="mt-6 text-xl font-semibold">2. Quais dados coletamos</h2>
@@ -148,7 +148,7 @@ export default function PrivacyPage() {
       </ul>
       <p className="mt-2 text-slate-300">
         Para exercer qualquer direito, escreva para{" "}
-        <strong>[falecom@mariomello.com.br]</strong>.
+        <strong>falecom@mariomello.com.br</strong>.
       </p>
 
       <h2 className="mt-6 text-xl font-semibold">9. Cookies</h2>
@@ -169,9 +169,9 @@ export default function PrivacyPage() {
 
       <h2 className="mt-6 text-xl font-semibold">11. Contato</h2>
       <p className="mt-2 text-slate-300">
-        Betelgeuse T.I. — E-mail: <strong>[falecom@mariomello.com.br]</strong>
+        Betelgeuse T.I. — E-mail: <strong>falecom@mariomello.com.br</strong>
         <br />
-        Encarregado de dados (DPO): <strong>[Mario Luiz de Mello]</strong>
+        Encarregado de dados (DPO): <strong>Mario Mello</strong>
       </p>
 
       <CompanyInfo />
