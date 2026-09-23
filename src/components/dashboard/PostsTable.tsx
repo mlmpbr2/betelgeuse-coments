@@ -44,13 +44,16 @@ type Analysis = {
   hidden: boolean;
 };
 
-const SENTIMENT_VARIANT: Record<
+const SENTIMENT_STYLE: Record<
   Analysis["sentiment"],
-  "default" | "secondary" | "destructive"
+  { variant: "default" | "secondary" | "destructive"; className?: string }
 > = {
-  positivo: "default",
-  neutro: "secondary",
-  negativo: "destructive",
+  positivo: {
+    variant: "default",
+    className: "bg-emerald-600 text-white hover:bg-emerald-600",
+  },
+  neutro: { variant: "secondary" },
+  negativo: { variant: "destructive" },
 };
 
 export function PostsTable() {
@@ -224,7 +227,7 @@ export function PostsTable() {
       {Object.entries(analyses).map(([postId, items]) =>
         items.length === 0 ? null : (
           <div key={postId} className="space-y-2">
-            <h3 className="text-sm font-medium text-slate-500">
+            <h3 className="text-sm font-medium text-muted-foreground">
               Comentarios analisados — post {postId}
             </h3>
             <Table>
@@ -246,7 +249,10 @@ export function PostsTable() {
                     </TableCell>
                     <TableCell className="max-w-md">{item.text}</TableCell>
                     <TableCell>
-                      <Badge variant={SENTIMENT_VARIANT[item.sentiment]}>
+                      <Badge
+                        variant={SENTIMENT_STYLE[item.sentiment].variant}
+                        className={SENTIMENT_STYLE[item.sentiment].className}
+                      >
                         {item.sentiment}
                       </Badge>
                       {item.hidden && (

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { MetricCards } from "@/components/dashboard/MetricCards";
 import { PermissionBadges } from "@/components/dashboard/PermissionBadges";
 import { PostsTable } from "@/components/dashboard/PostsTable";
+import { LegalFooter } from "@/components/LegalFooter";
 import { Separator } from "@/components/ui/separator";
 
 export default async function DashboardPage() {
@@ -16,7 +17,7 @@ export default async function DashboardPage() {
     <main className="mx-auto max-w-6xl space-y-6 p-6">
       <header className="space-y-1">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           Ola, {session.user.name ?? "usuario"}. Acompanhe seus comentarios e
           creditos.
         </p>
@@ -32,6 +33,8 @@ export default async function DashboardPage() {
         <h2 className="text-lg font-medium">Posts recentes</h2>
         <PostsTable />
       </section>
+
+      <LegalFooter />
     </main>
   );
 }

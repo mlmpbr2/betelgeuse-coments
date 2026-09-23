@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { LoginButton } from "@/components/auth/LoginButton";
+import { LegalFooter } from "@/components/LegalFooter";
 import {
   Card,
   CardContent,
@@ -17,7 +18,7 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Betelgeuse Coments</CardTitle>
@@ -28,13 +29,15 @@ export default async function LoginPage() {
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-3">
           <LoginButton />
-          <p className="text-center text-xs text-slate-400">
+          <p className="text-center text-xs text-muted-foreground">
             Primeiro acesso? Abra instagram.com em outra aba e faça login
             antes de entrar. Se o Instagram não te trouxer de volta
             automaticamente, clique em Entrar novamente.
           </p>
         </CardContent>
       </Card>
+
+      <LegalFooter />
     </main>
   );
 }

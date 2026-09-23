@@ -15,7 +15,7 @@ export default function DataDeletionPage() {
         Betelgeuse Coments — Última atualização: 23 de setembro de 2026
       </p>
 
-      <p className="mt-6 text-slate-600">
+      <p className="mt-6 text-slate-300">
         Você pode solicitar a exclusão completa dos seus dados do Betelgeuse
         Coments a qualquer momento, por qualquer um dos três caminhos abaixo.{" "}
         <strong>Todos têm o mesmo efeito:</strong> remoção integral dos dados
@@ -27,7 +27,7 @@ export default function DataDeletionPage() {
       </h2>
       <div className="my-3 rounded-lg border p-5">
         <h3 className="font-semibold">Desconectar a conta</h3>
-        <ol className="mt-2 list-decimal pl-5 text-slate-600">
+        <ol className="mt-2 list-decimal pl-5 text-slate-300">
           <li>
             Acesse o painel do Betelgeuse Coments com sua conta conectada;
           </li>
@@ -47,7 +47,7 @@ export default function DataDeletionPage() {
       </h2>
       <div className="my-3 rounded-lg border p-5">
         <h3 className="font-semibold">Revogar o acesso na origem</h3>
-        <ol className="mt-2 list-decimal pl-5 text-slate-600">
+        <ol className="mt-2 list-decimal pl-5 text-slate-300">
           <li>
             Abra o Instagram → <strong>Configurações e privacidade</strong>;
           </li>
@@ -59,7 +59,7 @@ export default function DataDeletionPage() {
             <strong>Remover</strong>.
           </li>
         </ol>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-slate-300">
           Ao revogar, nosso acesso é invalidado na hora. Para remover também os
           dados já armazenados, utilize a Opção 3 abaixo (ou ela ocorrerá
           automaticamente no ciclo de retenção de 30 dias).
@@ -74,7 +74,7 @@ export default function DataDeletionPage() {
             resposta em até 7 dias
           </span>
         </h3>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-slate-300">
           Envie um e-mail para <strong>[falecom@mariomello.com.br]</strong> com
           o assunto{" "}
           <strong>&quot;Exclusão de dados — Betelgeuse Coments&quot;</strong>,
@@ -84,7 +84,7 @@ export default function DataDeletionPage() {
       </div>
 
       <h2 className="mt-6 text-xl font-semibold">O que é excluído</h2>
-      <ul className="mt-2 list-disc pl-5 text-slate-600">
+      <ul className="mt-2 list-disc pl-5 text-slate-300">
         <li>Token de acesso e credenciais de conexão com o Instagram;</li>
         <li>Histórico de publicações e comentários sincronizados;</li>
         <li>
@@ -93,14 +93,14 @@ export default function DataDeletionPage() {
         </li>
         <li>Quaisquer outros dados associados à sua conta.</li>
       </ul>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         <strong>O que pode ser mantido:</strong> apenas registros exigidos por
         obrigação legal (ex.: logs fiscais/de segurança), pelo prazo mínimo
         exigido em lei, após o qual são eliminados.
       </p>
 
       <h2 className="mt-6 text-xl font-semibold">Dúvidas</h2>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         Consulte nossa{" "}
         <Link href="/privacy" className="underline">
           Política de Privacidade

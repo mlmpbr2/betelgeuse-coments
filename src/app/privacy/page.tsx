@@ -16,7 +16,7 @@ export default function PrivacyPage() {
       </p>
 
       <h2 className="mt-6 text-xl font-semibold">1. Quem somos</h2>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         O <strong>Betelgeuse Coments</strong> é um aplicativo desenvolvido e
         operado pela <strong>Betelgeuse T.I.</strong> CNPJ:51.770.124/0001-97,
         que permite a contas profissionais do Instagram analisar o sentimento
@@ -24,19 +24,19 @@ export default function PrivacyPage() {
         moderação (ocultar comentários e responder), sempre mediante
         autorização expressa do titular da conta.
       </p>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         Contato do controlador de dados:{" "}
         <strong>[falecom@mariomello.com.br]</strong>
       </p>
 
       <h2 className="mt-6 text-xl font-semibold">2. Quais dados coletamos</h2>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         Coletamos exclusivamente os dados da{" "}
         <strong>sua própria conta do Instagram</strong>, por meio da API oficial
         da Meta (Instagram API with Instagram Login), e somente após você
         autorizar o acesso na tela de permissões da Meta:
       </p>
-      <ul className="mt-2 list-disc pl-5 text-slate-600">
+      <ul className="mt-2 list-disc pl-5 text-slate-300">
         <li>
           <strong>Identificação da conta:</strong> ID de usuário e nome de
           usuário (@) do Instagram;
@@ -55,7 +55,7 @@ export default function PrivacyPage() {
           funcionalidades que você autorizou.
         </li>
       </ul>
-      <div className="my-4 rounded-md border border-l-4 border-slate-200 border-l-slate-400 bg-slate-50 p-4 text-slate-600">
+      <div className="my-4 rounded-md border border-l-4 border-border border-l-primary bg-secondary p-4 text-slate-300">
         <strong>Não coletamos:</strong> senhas, mensagens diretas (DMs), dados
         de seguidores, dados de terceiros que não sejam os comentários públicos
         nas suas próprias publicações, nem qualquer dado de outras contas do
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
       </div>
 
       <h2 className="mt-6 text-xl font-semibold">3. Como usamos os dados</h2>
-      <ul className="mt-2 list-disc pl-5 text-slate-600">
+      <ul className="mt-2 list-disc pl-5 text-slate-300">
         <li>
           <strong>Análise de sentimentos:</strong> o texto dos comentários é
           classificado automaticamente como positivo, neutro ou negativo, e
@@ -87,7 +87,7 @@ export default function PrivacyPage() {
       <h2 className="mt-6 text-xl font-semibold">
         4. O que NÃO fazemos com seus dados
       </h2>
-      <ul className="mt-2 list-disc pl-5 text-slate-600">
+      <ul className="mt-2 list-disc pl-5 text-slate-300">
         <li>
           Não vendemos, alugamos ou compartilhamos seus dados com terceiros
           para fins de marketing;
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
       </ul>
 
       <h2 className="mt-6 text-xl font-semibold">5. Compartilhamento</h2>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         Seus dados trafegam apenas entre: (a) você; (b) a infraestrutura de
         hospedagem do aplicativo; e (c) a plataforma Meta/Instagram, que é a
         origem dos dados. Não há repasse a quaisquer outros terceiros, salvo
@@ -113,7 +113,7 @@ export default function PrivacyPage() {
       <h2 className="mt-6 text-xl font-semibold">
         6. Armazenamento e segurança
       </h2>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         Os dados são armazenados em ambiente com acesso restrito e criptografia
         em trânsito (HTTPS). O token de acesso é mantido apenas enquanto sua
         conta estiver conectada ao aplicativo. Comentários ocultados e análises
@@ -121,7 +121,7 @@ export default function PrivacyPage() {
       </p>
 
       <h2 className="mt-6 text-xl font-semibold">7. Retenção e exclusão</h2>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         Mantemos seus dados somente enquanto a conta estiver conectada. Você
         pode solicitar a exclusão completa a qualquer momento pelos caminhos
         descritos em nossa página de{" "}
@@ -136,7 +136,7 @@ export default function PrivacyPage() {
       <h2 className="mt-6 text-xl font-semibold">
         8. Seus direitos (LGPD — Lei nº 13.709/2018)
       </h2>
-      <ul className="mt-2 list-disc pl-5 text-slate-600">
+      <ul className="mt-2 list-disc pl-5 text-slate-300">
         <li>
           Confirmação da existência de tratamento e acesso aos seus dados;
         </li>
@@ -145,13 +145,13 @@ export default function PrivacyPage() {
         <li>Revogação do consentimento e portabilidade, quando aplicável;</li>
         <li>Informação sobre compartilhamentos realizados.</li>
       </ul>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         Para exercer qualquer direito, escreva para{" "}
         <strong>[falecom@mariomello.com.br]</strong>.
       </p>
 
       <h2 className="mt-6 text-xl font-semibold">9. Cookies</h2>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         O aplicativo utiliza apenas cookies estritamente necessários à
         autenticação da sessão. Não utilizamos cookies de rastreamento ou
         publicidade.
@@ -160,14 +160,14 @@ export default function PrivacyPage() {
       <h2 className="mt-6 text-xl font-semibold">
         10. Alterações desta política
       </h2>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         Eventuais alterações serão publicadas nesta página com a data de
         atualização revisada. O uso continuado do aplicativo após a publicação
         implica ciência das alterações.
       </p>
 
       <h2 className="mt-6 text-xl font-semibold">11. Contato</h2>
-      <p className="mt-2 text-slate-600">
+      <p className="mt-2 text-slate-300">
         Betelgeuse T.I. — E-mail: <strong>[falecom@mariomello.com.br]</strong>
         <br />
         Encarregado de dados (DPO): <strong>[Mario Luiz de Mello]</strong>

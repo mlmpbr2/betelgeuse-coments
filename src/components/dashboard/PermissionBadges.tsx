@@ -14,13 +14,13 @@ const PERMISSIONS = [
 export function PermissionBadges() {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs text-slate-400">Permissoes do app:</span>
+      <span className="text-xs text-muted-foreground">Permissoes do app:</span>
       {PERMISSIONS.map((permission) => (
         <Badge
           key={permission.name}
           variant="outline"
           title={permission.hint}
-          className="font-normal text-slate-500"
+          className="font-normal text-muted-foreground"
         >
           {permission.name}
         </Badge>
