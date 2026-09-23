@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CompanyInfo } from "@/components/CompanyInfo";
 
 export const metadata = {
   title: "Exclusão de Dados — Betelgeuse Coments",
@@ -107,6 +108,8 @@ export default function DataDeletionPage() {
         </Link>{" "}
         ou escreva para <strong>[contato@betelgeuseti.com.br]</strong>.
       </p>
+
+      <CompanyInfo />
 
       <footer className="mt-10 border-t pt-4 text-sm text-slate-400">
         © 2026 Betelgeuse T.I.
