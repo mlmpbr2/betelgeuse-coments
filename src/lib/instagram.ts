@@ -80,7 +80,7 @@ export async function setCommentHidden(
   hidden: boolean
 ): Promise<void> {
   const params = new URLSearchParams({
-    is_hidden: String(hidden),
+    hide: String(hidden),
     access_token: accessToken,
   });
   await graphFetch<{ success?: boolean }>(
