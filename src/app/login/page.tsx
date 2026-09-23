@@ -26,8 +26,13 @@ export default async function LoginPage() {
             interacoes em um so lugar.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex justify-center">
+        <CardContent className="flex flex-col items-center gap-3">
           <LoginButton />
+          <p className="text-center text-xs text-slate-400">
+            Primeiro acesso? Abra instagram.com em outra aba e faça login
+            antes de entrar. Se o Instagram não te trouxer de volta
+            automaticamente, clique em Entrar novamente.
+          </p>
         </CardContent>
       </Card>
     </main>
