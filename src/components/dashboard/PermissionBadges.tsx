@@ -1,20 +1,23 @@
 import { Badge } from "@/components/ui/badge";
+import { getDictionary, type Lang } from "@/lib/i18n";
 
-const PERMISSIONS = [
-  {
-    name: "instagram_business_basic",
-    hint: "Acesso ao perfil e midia da conta Instagram",
-  },
-  {
-    name: "instagram_business_manage_comments",
-    hint: "Moderacao de comentarios: ler, ocultar e responder",
-  },
-];
+export function PermissionBadges({ lang = "pt" }: { lang?: Lang }) {
+  const t = getDictionary(lang);
 
-export function PermissionBadges() {
+  const PERMISSIONS = [
+    {
+      name: "instagram_business_basic",
+      hint: t.permissionHintBasic,
+    },
+    {
+      name: "instagram_business_manage_comments",
+      hint: t.permissionHintComments,
+    },
+  ];
+
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs text-muted-foreground">Permissoes do app:</span>
+      <span className="text-xs text-muted-foreground">{t.appPermissions}</span>
       {PERMISSIONS.map((permission) => (
         <Badge
           key={permission.name}

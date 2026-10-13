@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { enUS, ptBR } from "date-fns/locale";
 import {
   Table,
   TableBody,
@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getDictionary, type Lang } from "@/lib/i18n";
 
 type Post = {
   id: string;
@@ -56,8 +57,9 @@ const SENTIMENT_STYLE: Record<
   negativo: { variant: "destructive" },
 };
 
-export function PostsTable() {
+export function PostsTable({ lang = "pt" }: { lang?: Lang }) {
   const router = useRouter();
+  const t = getDictionary(lang);
   const [posts, setPosts] = useState<Post[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [analyzingPostId, setAnalyzingPostId] = useState<string | null>(null);
@@ -70,38 +72,42 @@ export function PostsTable() {
     fetch("/api/instagram/posts")
       .then(async (res) => {
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error ?? "Erro ao carregar posts");
+        if (!res.ok) throw new Error(data.error ?? t.errorLoadPosts);
         setPosts(data.posts);
       })
       .catch((err) => setError(err.message));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const analyzePost = useCallback(async (postId: string) => {
-    setAnalyzingPostId(postId);
-    setError(null);
-    try {
-      const res = await fetch("/api/sentiment/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postId }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Erro ao analisar");
+  const analyzePost = useCallback(
+    async (postId: string) => {
+      setAnalyzingPostId(postId);
+      setError(null);
+      try {
+        const res = await fetch("/api/sentiment/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ postId }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? t.errorAnalyze);
 
-      if (data.analyzed === 0) {
-        // Ja analisado antes: recarrega comentarios e usa analises existentes
-        setAnalyses((prev) => ({ ...prev, [postId]: prev[postId] ?? [] }));
+        if (data.analyzed === 0) {
+          // Ja analisado antes: recarrega comentarios e usa analises existentes
+          setAnalyses((prev) => ({ ...prev, [postId]: prev[postId] ?? [] }));
+          router.refresh();
+          return;
+        }
+        setAnalyses((prev) => ({ ...prev, [postId]: data.results }));
         router.refresh();
-        return;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t.errorAnalyze);
+      } finally {
+        setAnalyzingPostId(null);
       }
-      setAnalyses((prev) => ({ ...prev, [postId]: data.results }));
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao analisar");
-    } finally {
-      setAnalyzingPostId(null);
-    }
-  }, []);
+    },
+    [router, t]
+  );
 
   const toggleHidden = useCallback(
     async (postId: string, analysis: Analysis) => {
@@ -113,7 +119,7 @@ export function PostsTable() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Erro ao alterar visibilidade");
+        setError(data.error ?? t.errorVisibility);
         return;
       }
       setAnalyses((prev) => ({
@@ -124,7 +130,7 @@ export function PostsTable() {
       }));
       router.refresh();
     },
-    [router]
+    [router, t]
   );
 
   const sendReply = useCallback(async () => {
@@ -140,20 +146,20 @@ export function PostsTable() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Erro ao responder");
+      if (!res.ok) throw new Error(data.error ?? t.errorReply);
       setReplyTarget(null);
       setReplyMessage("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao responder");
+      setError(err instanceof Error ? err.message : t.errorReply);
     } finally {
       setSending(false);
     }
-  }, [replyTarget, replyMessage]);
+  }, [replyTarget, replyMessage, t]);
 
   if (error) {
     return (
       <Alert variant="destructive">
-        <AlertTitle>Erro</AlertTitle>
+        <AlertTitle>{t.errorTitle}</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
     );
@@ -174,11 +180,11 @@ export function PostsTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Legenda</TableHead>
-            <TableHead>Data</TableHead>
-            <TableHead className="text-right">Curtidas</TableHead>
-            <TableHead className="text-right">Comentarios</TableHead>
-            <TableHead className="text-right">Acoes</TableHead>
+            <TableHead>{t.thCaption}</TableHead>
+            <TableHead>{t.thDate}</TableHead>
+            <TableHead className="text-right">{t.thLikes}</TableHead>
+            <TableHead className="text-right">{t.thComments}</TableHead>
+            <TableHead className="text-right">{t.thActions}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -192,17 +198,19 @@ export function PostsTable() {
                     rel="noreferrer"
                     className="hover:underline"
                   >
-                    {post.caption ?? "(sem legenda)"}
+                    {post.caption ?? t.noCaption}
                   </a>
                 ) : (
-                  post.caption ?? "(sem legenda)"
+                  post.caption ?? t.noCaption
                 )}
               </TableCell>
               <TableCell>
                 {post.timestamp
-                  ? format(new Date(post.timestamp), "dd/MM/yyyy HH:mm", {
-                      locale: ptBR,
-                    })
+                  ? format(
+                      new Date(post.timestamp),
+                      lang === "en" ? "MM/dd/yyyy h:mm a" : "dd/MM/yyyy HH:mm",
+                      { locale: lang === "en" ? enUS : ptBR }
+                    )
                   : "-"}
               </TableCell>
               <TableCell className="text-right">{post.like_count ?? 0}</TableCell>
@@ -216,7 +224,7 @@ export function PostsTable() {
                   disabled={analyzingPostId === post.id}
                   onClick={() => analyzePost(post.id)}
                 >
-                  {analyzingPostId === post.id ? "Analisando..." : "Analisar"}
+                  {analyzingPostId === post.id ? t.analyzing : t.analyze}
                 </Button>
               </TableCell>
             </TableRow>
@@ -228,24 +236,22 @@ export function PostsTable() {
         items.length === 0 ? null : (
           <div key={postId} className="space-y-2">
             <h3 className="text-sm font-medium text-muted-foreground">
-              Comentarios analisados — post {postId}
+              {t.analyzedCommentsTitle(postId)}
             </h3>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Autor</TableHead>
-                  <TableHead>Comentario</TableHead>
-                  <TableHead>Sentimento</TableHead>
-                  <TableHead className="text-right">Acoes</TableHead>
+                  <TableHead>{t.thAuthor}</TableHead>
+                  <TableHead>{t.thComment}</TableHead>
+                  <TableHead>{t.thSentiment}</TableHead>
+                  <TableHead className="text-right">{t.thActions}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {items.map((item) => (
                   <TableRow key={item.commentId}>
                     <TableCell>
-                      {item.author?.trim()
-                        ? item.author
-                        : "Usuario do Instagram"}
+                      {item.author?.trim() ? item.author : t.instagramUser}
                     </TableCell>
                     <TableCell className="max-w-md">{item.text}</TableCell>
                     <TableCell>
@@ -253,11 +259,11 @@ export function PostsTable() {
                         variant={SENTIMENT_STYLE[item.sentiment].variant}
                         className={SENTIMENT_STYLE[item.sentiment].className}
                       >
-                        {item.sentiment}
+                        {t.sentimentLabels[item.sentiment]}
                       </Badge>
                       {item.hidden && (
                         <Badge variant="outline" className="ml-2">
-                          oculto
+                          {t.hiddenBadge}
                         </Badge>
                       )}
                     </TableCell>
@@ -267,14 +273,14 @@ export function PostsTable() {
                         variant="outline"
                         onClick={() => toggleHidden(postId, item)}
                       >
-                        {item.hidden ? "Exibir" : "Ocultar"}
+                        {item.hidden ? t.unhide : t.hide}
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => setReplyTarget(item)}
                       >
-                        Responder
+                        {t.reply}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -291,16 +297,16 @@ export function PostsTable() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Responder comentario</DialogTitle>
+            <DialogTitle>{t.replyDialogTitle}</DialogTitle>
             <DialogDescription>
               {replyTarget?.author?.trim()
                 ? replyTarget.author
-                : "Usuario do Instagram"}
+                : t.instagramUser}
               : {replyTarget?.text}
             </DialogDescription>
           </DialogHeader>
           <Textarea
-            placeholder="Escreva sua resposta..."
+            placeholder={t.replyPlaceholder}
             value={replyMessage}
             onChange={(e) => setReplyMessage(e.target.value)}
           />
@@ -310,10 +316,10 @@ export function PostsTable() {
               onClick={() => setReplyTarget(null)}
               disabled={sending}
             >
-              Cancelar
+              {t.cancel}
             </Button>
             <Button onClick={sendReply} disabled={sending || !replyMessage.trim()}>
-              {sending ? "Enviando..." : "Enviar"}
+              {sending ? t.sending : t.send}
             </Button>
           </DialogFooter>
         </DialogContent>

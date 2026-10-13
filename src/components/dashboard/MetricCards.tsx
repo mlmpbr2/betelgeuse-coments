@@ -1,7 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getDictionary, type Lang } from "@/lib/i18n";
 
-export async function MetricCards({ userId }: { userId: string }) {
+export async function MetricCards({
+  userId,
+  lang = "pt",
+}: {
+  userId: string;
+  lang?: Lang;
+}) {
   const [credit, totalAnalyses, negativeHidden] = await Promise.all([
     prisma.credit.findUnique({ where: { userId } }),
     prisma.commentAnalysis.count({
@@ -12,10 +19,12 @@ export async function MetricCards({ userId }: { userId: string }) {
     }),
   ]);
 
+  const t = getDictionary(lang);
+
   const cards = [
-    { title: "Creditos disponiveis", value: credit?.balance ?? 0 },
-    { title: "Comentarios analisados", value: totalAnalyses },
-    { title: "Negativos ocultados", value: negativeHidden },
+    { title: t.creditsAvailable, value: credit?.balance ?? 0 },
+    { title: t.analyzedCommentsMetric, value: totalAnalyses },
+    { title: t.hiddenNegatives, value: negativeHidden },
   ];
 
   return (
